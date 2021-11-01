@@ -23,6 +23,16 @@ namespace HiSafe
 
         public event OnFrameResieve frame_recieve_isr;
 
+        public void set_exposure()
+        {
+            device.SetCameraProperty(CameraControlProperty.Exposure , -7 , CameraControlFlags.Manual) ; 
+        }
+
+        public void get_camera_propreties(IntPtr hndl)
+        {
+            device.DisplayPropertyPage(hndl);
+        }
+
         public List<FilterInfo> search_camera()
         {
             Af_device_collection = new FilterInfoCollection(FilterCategory.VideoInputDevice);
