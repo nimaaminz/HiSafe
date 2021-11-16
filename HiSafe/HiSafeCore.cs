@@ -22,74 +22,6 @@ namespace HiSafeCore
 
     public delegate void OnFrameProccess(Bitmap frame); // the delage that will invoke by MotionDetect class 
 
-    public class FrameDetails
-    {
-
-
-        public Color[] average_frame = new Color[16];
-
-        public void get_av(Bitmap current_frame)
-        {
-            // width = 320 | height = 240       4 | 4 
-
-
-
-            //--------------------------------------------------------------------------------
-
-
-            int _width_counter = 80, _height_counter = 60;
-            Graphics graphics = Graphics.FromImage(current_frame);
-            Pen pen = new Pen(Color.DarkOrange);
-            Random random = new Random();
-            int _w_counter = 0, _h_counter = 0;
-
-            while (_h_counter < _height_counter)
-            {
-
-                while (_w_counter < _width_counter)
-                {
-                    //graphics.DrawLine(new Pen(Color.FromArgb(random.Next())), _w_counter, _h_counter, _width_counter, _height_counter);
-                    //graphics.DrawLine(new Pen(Color.FromArgb(random.Next())), _w_counter, _h_counter, _width_counter, _h_counter);
-
-                    graphics.DrawLine(new Pen(Color.FromArgb(random.Next())), _w_counter, _h_counter, _width_counter, _h_counter);
-
-
-                    _w_counter += 80;
-                    if (_width_counter < 320) _width_counter += 80; ;
-                    graphics.DrawLine(new Pen(Color.FromArgb(random.Next())), _w_counter, _h_counter, _w_counter, _height_counter);
-                }
-                _w_counter = 0;
-                _width_counter = 80;
-                _h_counter += 60;
-                if (_height_counter < 240) _height_counter += 60; ;
-
-            }
-
-
-        }
-
-
-        public Color average(Color[] _colors, int _len = 4800)
-        {
-            int r = 0, g = 0, b = 0, i;
-            //-------------------------------------------------
-            for (i = 0; i < _len; i++)
-            {
-                r += _colors[i].R;
-                g += _colors[i].G;
-                b += _colors[i].B;
-            }
-            if (i != 0)
-            {
-                r = r / i;
-                b = b / i;
-                g = g / i;
-            }
-            //-------------------------------------------------
-            return Color.FromArgb(r, g, b);
-        }
-    }
-
 
     public class CameraInterface
     {
@@ -182,8 +114,6 @@ namespace HiSafeCore
     }
 
 
-
-
     public class MotionDetect
     {
 
@@ -216,7 +146,7 @@ namespace HiSafeCore
             extract(frame);
             proccess_event?.Invoke(frame);
 
-            //pchecker.stop();
+            ////pchecker.stop();
             interlock_boolean = false;
         }
 
@@ -264,10 +194,7 @@ namespace HiSafeCore
 
         }
 
-
     }
-
-
     public class PerformanceChecker
     {
         Stopwatch sw = new Stopwatch();
