@@ -224,28 +224,22 @@ namespace HiSafeCore
 
         public void extract(Bitmap _frame)
         {
-            Rectangle rec = new Rectangle(0, 0, 320, 240);
-            int depth = Bitmap.GetPixelFormatSize(_frame.PixelFormat);
-            int step = depth / 8;
+            pchecker.start();
+            int step = Bitmap.GetPixelFormatSize(_frame.PixelFormat) / 8;
             byte index_box = 0;
-            BitmapData bitmap_data = _frame.LockBits(rec, ImageLockMode.ReadWrite, _frame.PixelFormat);
+            BitmapData bitmap_data = _frame.LockBits(new Rectangle(0, 0, 320, 240), ImageLockMode.ReadWrite, _frame.PixelFormat);
             IntPtr start_address = bitmap_data.Scan0;
             int _width_counter = 80, _height_counter = 60;
             int _w_counter = 0, _h_counter = 0;
-                pchecker.start();
             while (_h_counter < _height_counter)
             {
                 while (_w_counter < _width_counter)
                 {
-
-                    // get each box pixels 
-
-                    //byte[] box_color = new byte[4800];
                     int index = 0;
                     int sum = 0;
-                    for (int i_y = _h_counter; i_y <= _height_counter; i_y++)
+                    for (int i_y = _h_counter; i_y < _height_counter; i_y += 2)
                     {
-                        for (int j_x = _w_counter; j_x <= _width_counter; j_x++)
+                        for (int j_x = _w_counter; j_x < _width_counter; j_x += 2)
                         {
                             int i = ((i_y * 320) + j_x) * step;
                             sum += Marshal.ReadByte(start_address + (i + 2));
@@ -253,31 +247,23 @@ namespace HiSafeCore
                         }
                     }
                     // Average the current byte 
-
-                    averages[index_box] = (byte)(sum / 4800);
+                    averages[index_box] = (byte)(sum / 1200);
 
                     index_box++;
                     _w_counter += 80;
-                    if (_width_counter < 320) _width_counter += 80; ;
+                    if (_width_counter < 320) _width_counter += 80;
                 }
                 _w_counter = 0;
                 _width_counter = 80;
                 _h_counter += 60;
-                if (_height_counter < 240) _height_counter += 60; ;
+                if (_height_counter < 240) _height_counter += 60;
             }
-            pchecker.stop();
 
             _frame.UnlockBits(bitmap_data);
+            pchecker.stop();
 
         }
 
-        int sum_average;
-
-        public void average()
-        {
-
-
-        }
 
     }
 

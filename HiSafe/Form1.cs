@@ -230,7 +230,6 @@ namespace HiSafe
                 while (_w_counter < _width_counter)
                 {
                     Color saturation = Color.FromArgb(_average_bytes[index_box] , _average_bytes[index_box] , _average_bytes[index_box]) ; 
-                    pe.Graphics.DrawLine(new Pen(Color.Red), 0, 0, 50, 60);
                     pe.Graphics.FillRectangle(new SolidBrush(saturation), new Rectangle(_w_counter, _h_counter, _width_counter, _height_counter));
 
 
