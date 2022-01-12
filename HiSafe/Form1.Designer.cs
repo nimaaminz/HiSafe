@@ -36,20 +36,24 @@ namespace HiSafe
             this.StartBtn = new System.Windows.Forms.Button();
             this.log_lbl = new System.Windows.Forms.Label();
             this.setting_btn = new System.Windows.Forms.Button();
-            this.main_picbox = new HiSafe.HiSafePictureBox();
-            this.graph_picturebox = new System.Windows.Forms.PictureBox();
             this.graph_timer = new System.Windows.Forms.Timer(this.components);
-            this.hiSafeAverageColors1 = new HiSafe.HiSafeAverageColors();
             this.data_reader = new System.Windows.Forms.Timer(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.main_picbox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.graph_picturebox)).BeginInit();
+            this.frame_show = new System.Windows.Forms.CheckBox();
+            this.db_staus_lbl = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.hiSafeGraphPerformance = new HiSafe.HiSafeGraphPerformance();
+            this.hiSafeAverageColors1 = new HiSafe.HiSafeAverageColors();
+            this.main_picbox = new HiSafe.HiSafePictureBox();
+            this.timer_database = new System.Windows.Forms.Timer(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.hiSafeGraphPerformance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hiSafeAverageColors1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.main_picbox)).BeginInit();
             this.SuspendLayout();
             // 
             // ComboBoxCamera
             // 
             this.ComboBoxCamera.FormattingEnabled = true;
-            this.ComboBoxCamera.Location = new System.Drawing.Point(90, 14);
+            this.ComboBoxCamera.Location = new System.Drawing.Point(58, 14);
             this.ComboBoxCamera.Name = "ComboBoxCamera";
             this.ComboBoxCamera.Size = new System.Drawing.Size(121, 21);
             this.ComboBoxCamera.TabIndex = 0;
@@ -65,7 +69,7 @@ namespace HiSafe
             // 
             // StartBtn
             // 
-            this.StartBtn.Location = new System.Drawing.Point(283, 13);
+            this.StartBtn.Location = new System.Drawing.Point(185, 14);
             this.StartBtn.Name = "StartBtn";
             this.StartBtn.Size = new System.Drawing.Size(52, 21);
             this.StartBtn.TabIndex = 2;
@@ -84,13 +88,70 @@ namespace HiSafe
             // 
             // setting_btn
             // 
-            this.setting_btn.Location = new System.Drawing.Point(283, 14);
+            this.setting_btn.Location = new System.Drawing.Point(185, 13);
             this.setting_btn.Name = "setting_btn";
             this.setting_btn.Size = new System.Drawing.Size(52, 21);
             this.setting_btn.TabIndex = 6;
             this.setting_btn.Text = "Settings";
             this.setting_btn.UseVisualStyleBackColor = true;
             this.setting_btn.Click += new System.EventHandler(this.setting_btn_Click);
+            // 
+            // graph_timer
+            // 
+            this.graph_timer.Interval = 15;
+            this.graph_timer.Tick += new System.EventHandler(this.graph_timer_Tick);
+            // 
+            // data_reader
+            // 
+            this.data_reader.Interval = 33;
+            this.data_reader.Tick += new System.EventHandler(this.data_reader_Tick);
+            // 
+            // frame_show
+            // 
+            this.frame_show.AutoSize = true;
+            this.frame_show.Location = new System.Drawing.Point(602, 28);
+            this.frame_show.Name = "frame_show";
+            this.frame_show.Size = new System.Drawing.Size(56, 17);
+            this.frame_show.TabIndex = 10;
+            this.frame_show.Text = "Show ";
+            this.frame_show.UseVisualStyleBackColor = true;
+            this.frame_show.CheckedChanged += new System.EventHandler(this.frame_show_CheckedChanged);
+            // 
+            // db_staus_lbl
+            // 
+            this.db_staus_lbl.AutoSize = true;
+            this.db_staus_lbl.Location = new System.Drawing.Point(676, 22);
+            this.db_staus_lbl.Name = "db_staus_lbl";
+            this.db_staus_lbl.Size = new System.Drawing.Size(86, 13);
+            this.db_staus_lbl.TabIndex = 12;
+            this.db_staus_lbl.Text = "Database Status";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(338, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(73, 27);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Last Detect";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // hiSafeGraphPerformance
+            // 
+            this.hiSafeGraphPerformance.Location = new System.Drawing.Point(12, 51);
+            this.hiSafeGraphPerformance.Name = "hiSafeGraphPerformance";
+            this.hiSafeGraphPerformance.Size = new System.Drawing.Size(320, 240);
+            this.hiSafeGraphPerformance.TabIndex = 11;
+            this.hiSafeGraphPerformance.TabStop = false;
+            // 
+            // hiSafeAverageColors1
+            // 
+            this.hiSafeAverageColors1.Image = ((System.Drawing.Image)(resources.GetObject("hiSafeAverageColors1.Image")));
+            this.hiSafeAverageColors1.Location = new System.Drawing.Point(679, 51);
+            this.hiSafeAverageColors1.Name = "hiSafeAverageColors1";
+            this.hiSafeAverageColors1.Size = new System.Drawing.Size(320, 240);
+            this.hiSafeAverageColors1.TabIndex = 9;
+            this.hiSafeAverageColors1.TabStop = false;
             // 
             // main_picbox
             // 
@@ -101,54 +162,36 @@ namespace HiSafe
             this.main_picbox.TabIndex = 7;
             this.main_picbox.TabStop = false;
             // 
-            // graph_picturebox
+            // timer_database
             // 
-            this.graph_picturebox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.graph_picturebox.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.graph_picturebox.Location = new System.Drawing.Point(12, 51);
-            this.graph_picturebox.Name = "graph_picturebox";
-            this.graph_picturebox.Size = new System.Drawing.Size(320, 240);
-            this.graph_picturebox.TabIndex = 8;
-            this.graph_picturebox.TabStop = false;
-            // 
-            // graph_timer
-            // 
-            this.graph_timer.Interval = 10;
-            this.graph_timer.Tick += new System.EventHandler(this.graph_timer_Tick);
-            // 
-            // hiSafeAverageColors1
-            // 
-            this.hiSafeAverageColors1.Location = new System.Drawing.Point(679, 51);
-            this.hiSafeAverageColors1.Name = "hiSafeAverageColors1";
-            this.hiSafeAverageColors1.Size = new System.Drawing.Size(320, 240);
-            this.hiSafeAverageColors1.TabIndex = 9;
-            this.hiSafeAverageColors1.TabStop = false;
-            // 
-            // data_reader
-            // 
-            this.data_reader.Interval = 33;
-            this.data_reader.Tick += new System.EventHandler(this.data_reader_Tick);
+            this.timer_database.Enabled = true;
+            this.timer_database.Interval = 1000;
+            this.timer_database.Tick += new System.EventHandler(this.timer_database_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1011, 297);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.db_staus_lbl);
+            this.Controls.Add(this.hiSafeGraphPerformance);
+            this.Controls.Add(this.frame_show);
             this.Controls.Add(this.hiSafeAverageColors1);
-            this.Controls.Add(this.graph_picturebox);
             this.Controls.Add(this.main_picbox);
             this.Controls.Add(this.log_lbl);
             this.Controls.Add(this.StartBtn);
-            this.Controls.Add(this.CameraNameLbl);
             this.Controls.Add(this.ComboBoxCamera);
             this.Controls.Add(this.setting_btn);
+            this.Controls.Add(this.CameraNameLbl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "HiSafe";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.main_picbox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.graph_picturebox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hiSafeGraphPerformance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hiSafeAverageColors1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.main_picbox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,10 +205,14 @@ namespace HiSafe
         private System.Windows.Forms.Label log_lbl;
         private System.Windows.Forms.Button setting_btn;
         private HiSafePictureBox main_picbox;
-        private System.Windows.Forms.PictureBox graph_picturebox;
         private System.Windows.Forms.Timer graph_timer;
         private HiSafeAverageColors hiSafeAverageColors1;
         private System.Windows.Forms.Timer data_reader;
+        private System.Windows.Forms.CheckBox frame_show;
+        private HiSafeGraphPerformance hiSafeGraphPerformance;
+        private System.Windows.Forms.Label db_staus_lbl;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Timer timer_database;
     }
 }
 

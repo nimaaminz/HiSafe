@@ -15,7 +15,8 @@ namespace HiSafe
         [STAThread]
         static void Main()
         {
-            Process.GetCurrentProcess().ProcessorAffinity = (IntPtr)0x0003;
+            //Process.GetCurrentProcess().ProcessorAffinity = (IntPtr)0x0003;
+                                                                            //
                                                                             //          CPU AFFINITY HEX CODE HERE : 
                                                                             //          0x0001                           1
                                                                             //          0x0002                           2
