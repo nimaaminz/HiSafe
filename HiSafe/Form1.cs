@@ -34,22 +34,32 @@ namespace HiSafe
         {
             InitializeComponent();
         }
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            /**
+             * CREATE A TIMER FOR CALCULATE 
+             * THE FPS 
+             * **/
             PerSecTimer = new Timer();
             PerSecTimer.Interval = 1000;
             PerSecTimer.Tick += PerSecTimer_Tick; ;
+
+
             camera = new CameraInterface();
 
-
+            /**
+             * ADD ALL FINDED CAMERA TO COMBOBOX 
+             * **/
             foreach (var item_cam in camera.search_camera())
             {
                 ComboBoxCamera.Items.Add(item_cam.Name);
             }
             if (ComboBoxCamera.Items.Count != 0) ComboBoxCamera.SelectedIndex = 0;
+            
 
             databasse_comm = new DataBaseMySqlClass(mysql_string_connection);
-
 
             start();
         }
@@ -63,6 +73,7 @@ namespace HiSafe
 
         private void start()
         {
+
             if(camera.cams_connected_list().Count == 0) 
             {
                 MessageBox.Show("No camera detect!");
@@ -70,7 +81,11 @@ namespace HiSafe
                 return;
             }
 
-
+            /**
+             * TRY TO START CAMERA 
+             * AND IF THE CAMERA START SUCCESSFULLY 
+             * THEN CONTINIUE THE PROGRAM 
+             * **/
             if (camera.start_camera(camera.cams_connected_list()[ComboBoxCamera.SelectedIndex]))
             {
                 log_lbl.Text = "Done";
@@ -79,8 +94,9 @@ namespace HiSafe
                 StartBtn.Visible = false;
                 //----after camera start-----
                 md_process = new MotionDetect(camera);
-                md_process.proccess_event += Md_process_proccess_event; ;
-                md_process.detect_motion_event += Md_process_detect_motion_event;
+
+                md_process.proccess_event       += Md_process_proccess_event; ;
+                md_process.detect_motion_event  += Md_process_detect_motion_event;
 
 
                 PerSecTimer.Start();
@@ -95,6 +111,10 @@ namespace HiSafe
 
         int motion_detect_count = 0;
 
+        /// <summary>
+        /// THIS IS A EVENT THAT OCCUR WHEN 
+        /// THE CORE DETECT MOTION IN FRAME 
+        /// </summary>
         private void Md_process_detect_motion_event()
         {
             motion_detect_count++;
@@ -108,6 +128,13 @@ namespace HiSafe
             }
         }
 
+        /// <summary>
+        /// OCCUR WHEN THE NEW FRAME COMING AND 
+        /// CORE EXTRACT INFO AND THEN SEND TO UI FOR 
+        /// PRINTING 
+        /// </summary>
+        /// <param name="buffer">THE POINTER IN MEMORY OF FIRST FRAME DATA</param>
+        /// <param name="length">THE LENGTH OF DATA OF FRAME</param>
         private void Md_process_proccess_event(IntPtr buffer, int length)
         {
             if (frame_show_checker)
@@ -150,6 +177,12 @@ namespace HiSafe
             frame_show_checker = frame_show.Checked ? true : false;
         }
 
+        /// <summary>
+        /// EXTRACT THE LAST DETECT IN DB 
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             GetDetectsImagesFromDBFrom _last_img_form = new GetDetectsImagesFromDBFrom();
