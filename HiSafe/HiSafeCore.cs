@@ -14,16 +14,17 @@ using MySql.Data.MySqlClient;
 
 namespace HiSafeCore
 {
+    // the delegate that will invoke by Camera interface on new frame 
+    public delegate void OnFrameResieve(IntPtr buffer, int length, double time_stamp);
+    // the delage that will invoke by MotionDetect class 
+    public delegate void OnFrameProccess(IntPtr buffer, int length);
+    // when new frame is different with average this vent should be invoke 
+    // then the UI will count he time per frame that this method call and when 
+    // the count getting out of a spesific range should do the next things and 
+    // on that moment mean an object coming in frame 
+    public delegate void OnDetectAvrg(); 
 
-    public delegate void OnFrameResieve(IntPtr buffer, int length, double time_stamp);  // the delegate that will invoke by Camera interface on new frame 
-
-    public delegate void OnFrameProccess(IntPtr buffer, int length); // the delage that will invoke by MotionDetect class 
-
-
-    public delegate void OnDetectAvrg(); // when new frame is different with average this vent should be invoke 
-                                         // then the UI will count he time per frame that this method call and when 
-                                         // the count getting out of a spesific range should do the next things and 
-                                         // on that moment mean an object coming in frame 
+    
     public class CameraInterface
     {
 
@@ -44,6 +45,11 @@ namespace HiSafeCore
             device.DisplayPropertyPage(hndl);
         }
 
+        /// <summary>
+        /// SEARCH AND GET THE LIST OF 
+        /// FINDED CAMERA INPUTS IN MACHINE
+        /// </summary>
+        /// <returns></returns>
         public List<FilterInfo> search_camera()
         {
             Af_device_collection = new FilterInfoCollection(FilterCategory.VideoInputDevice);

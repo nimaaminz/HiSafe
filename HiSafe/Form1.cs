@@ -279,6 +279,14 @@ namespace HiSafe
             byte* dst = (byte*)imageData.Scan0.ToPointer() + dstStride * (height - 1);
             byte* src = (byte*)buffer_ptr.ToPointer();
 
+            //for (int y = 0; y < height; y++)
+            //{
+            //    memcpy(dst, src, srcStride);
+            //    dst -= dstStride;
+            //    src += srcStride;
+            //}
+
+
             for (int y = 0; y < height; y++)
             {
                 memcpy(dst, src, srcStride);
