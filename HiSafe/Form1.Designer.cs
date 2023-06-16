@@ -39,12 +39,11 @@ namespace HiSafe
             this.graph_timer = new System.Windows.Forms.Timer(this.components);
             this.data_reader = new System.Windows.Forms.Timer(this.components);
             this.frame_show = new System.Windows.Forms.CheckBox();
-            this.db_staus_lbl = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.hiSafeGraphPerformance = new HiSafe.HiSafeGraphPerformance();
             this.hiSafeAverageColors1 = new HiSafe.HiSafeAverageColors();
             this.main_picbox = new HiSafe.HiSafePictureBox();
-            this.timer_database = new System.Windows.Forms.Timer(this.components);
+            this.cb_save_frames = new System.Windows.Forms.CheckBox();
+            this.cb_detect_sound = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.hiSafeGraphPerformance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hiSafeAverageColors1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.main_picbox)).BeginInit();
@@ -119,25 +118,6 @@ namespace HiSafe
             this.frame_show.UseVisualStyleBackColor = true;
             this.frame_show.CheckedChanged += new System.EventHandler(this.frame_show_CheckedChanged);
             // 
-            // db_staus_lbl
-            // 
-            this.db_staus_lbl.AutoSize = true;
-            this.db_staus_lbl.Location = new System.Drawing.Point(676, 22);
-            this.db_staus_lbl.Name = "db_staus_lbl";
-            this.db_staus_lbl.Size = new System.Drawing.Size(86, 13);
-            this.db_staus_lbl.TabIndex = 12;
-            this.db_staus_lbl.Text = "Database Status";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(338, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(73, 27);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "Last Detect";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // hiSafeGraphPerformance
             // 
             this.hiSafeGraphPerformance.Location = new System.Drawing.Point(12, 51);
@@ -164,19 +144,35 @@ namespace HiSafe
             this.main_picbox.TabIndex = 7;
             this.main_picbox.TabStop = false;
             // 
-            // timer_database
+            // cb_save_frames
             // 
-            this.timer_database.Enabled = true;
-            this.timer_database.Interval = 1000;
-            this.timer_database.Tick += new System.EventHandler(this.timer_database_Tick);
+            this.cb_save_frames.AutoSize = true;
+            this.cb_save_frames.Location = new System.Drawing.Point(243, 17);
+            this.cb_save_frames.Name = "cb_save_frames";
+            this.cb_save_frames.Size = new System.Drawing.Size(88, 17);
+            this.cb_save_frames.TabIndex = 14;
+            this.cb_save_frames.Text = "Save Frames";
+            this.cb_save_frames.UseVisualStyleBackColor = true;
+            // 
+            // cb_detect_sound
+            // 
+            this.cb_detect_sound.AutoSize = true;
+            this.cb_detect_sound.Checked = true;
+            this.cb_detect_sound.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cb_detect_sound.Location = new System.Drawing.Point(337, 17);
+            this.cb_detect_sound.Name = "cb_detect_sound";
+            this.cb_detect_sound.Size = new System.Drawing.Size(51, 17);
+            this.cb_detect_sound.TabIndex = 15;
+            this.cb_detect_sound.Text = "Beep";
+            this.cb_detect_sound.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1011, 297);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.db_staus_lbl);
+            this.Controls.Add(this.cb_detect_sound);
+            this.Controls.Add(this.cb_save_frames);
             this.Controls.Add(this.hiSafeGraphPerformance);
             this.Controls.Add(this.frame_show);
             this.Controls.Add(this.hiSafeAverageColors1);
@@ -212,9 +208,8 @@ namespace HiSafe
         private System.Windows.Forms.Timer data_reader;
         private System.Windows.Forms.CheckBox frame_show;
         private HiSafeGraphPerformance hiSafeGraphPerformance;
-        private System.Windows.Forms.Label db_staus_lbl;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Timer timer_database;
+        private System.Windows.Forms.CheckBox cb_save_frames;
+        private System.Windows.Forms.CheckBox cb_detect_sound;
     }
 }
 

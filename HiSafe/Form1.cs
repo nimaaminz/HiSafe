@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -23,11 +24,6 @@ namespace HiSafe
         private Timer PerSecTimer;
 
         private bool frame_show_checker = true;
-        private bool DB_CONNECTED;
-
-        private string mysql_string_connection = "datasource=127.0.0.1;port=3306;username=root;password=;database=hisafe_db;";
-
-        DataBaseMySqlClass databasse_comm;
 
 
         public Form1()
@@ -59,9 +55,10 @@ namespace HiSafe
             if (ComboBoxCamera.Items.Count != 0) ComboBoxCamera.SelectedIndex = 0;
             
 
-            databasse_comm = new DataBaseMySqlClass(mysql_string_connection);
-
-            start();
+            // NOW WAINTINTG FOR USER SELECT CAMERA AND START
+            // THE CAMERA AND CLICK THE START BUTTON 
+            // THEN THE START() FUNCTION WILL RISE AND SET EVERYTHING . . .
+          
         }
 
         private void PerSecTimer_Tick(object sender, EventArgs e)
@@ -88,20 +85,17 @@ namespace HiSafe
              * **/
             if (camera.start_camera(camera.cams_connected_list()[ComboBoxCamera.SelectedIndex]))
             {
-                log_lbl.Text = "Done";
-                // after start : 
+
                 setting_btn.Location = StartBtn.Location;
                 StartBtn.Visible = false;
-                //----after camera start-----
+                //------------------------------------------------------------------
                 md_process = new MotionDetect(camera);
-
                 md_process.proccess_event       += Md_process_proccess_event; ;
                 md_process.detect_motion_event  += Md_process_detect_motion_event;
-
-
-                PerSecTimer.Start();
-                graph_timer.Start();
-                data_reader.Start();
+                //------------------------------------------------------------------
+                PerSecTimer.Start(); // CALCULATE FPS TIMER
+                graph_timer.Start(); // GRAPH RENDER TIMER 
+                data_reader.Start(); // READ AVERAGE COLORS TIMER 
             }
             else
                 log_lbl.Text = "Faild";
@@ -120,10 +114,19 @@ namespace HiSafe
             motion_detect_count++;
             if (motion_detect_count > 10)
             {
-                if (DB_CONNECTED)
-                    databasse_comm.add_record((Bitmap)main_picbox.BackgroundImage);
+                if(cb_save_frames.Checked) 
+                {
+                    string base_path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\HiSafeDetects\\" + DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + ".jpg";
+                    if (!Directory.Exists(Path.GetDirectoryName(base_path)))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(base_path));
+                    }
+                    main_picbox.BackgroundImage.Save(base_path , ImageFormat.Jpeg) ; 
+                }
 
-                Console.Beep();
+                if(cb_detect_sound.Checked)
+                    Console.Beep(motion_detect_count * 100 , 25);
+
                 motion_detect_count = 0;
             }
         }
@@ -177,50 +180,6 @@ namespace HiSafe
             frame_show_checker = frame_show.Checked ? true : false;
         }
 
-        /// <summary>
-        /// EXTRACT THE LAST DETECT IN DB 
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
-        {
-            GetDetectsImagesFromDBFrom _last_img_form = new GetDetectsImagesFromDBFrom();
-            _last_img_form.ByteToBitmap(databasse_comm.last_detection_image());
-            _last_img_form.Show();
-        }
-
-        /*
-         
-                THIS TIMER WILL CHECK CONNECTION OF DATABASE AND IF NOT 
-                CONNECTED WIL RECONNECT THE DB
-         
-         */
-
-        private void timer_database_Tick(object sender, EventArgs e)
-        {
-            if (!DB_CONNECTED)
-            {
-
-                if (databasse_comm.conenctDB())
-                {
-
-                    DB_CONNECTED = true;
-                    db_staus_lbl.Text = "Database connected in localhost:80 ,  name  :hisafe_db";
-                    db_staus_lbl.ForeColor = Color.DarkGreen;
-
-                }
-            }
-            else
-            {
-                if(databasse_comm.HostConnectionStatusDB==false)
-                {
-                    DB_CONNECTED = false ;
-                    db_staus_lbl.Text = "Database down";
-                    db_staus_lbl.ForeColor = Color.DarkRed;
-                }
-            }
-        }
     }
 
     public class HiSafePictureBox : PictureBox
@@ -263,7 +222,6 @@ namespace HiSafe
         {
 
 
-            //System.Drawing.Bitmap image =(Bitmap)Bitmap.FromStream(new UnmanagedMemoryStream((byte*)buffer.ToPointer(),bufferLen)) ;
             System.Drawing.Bitmap image = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
             // lock bitmap data
@@ -278,6 +236,13 @@ namespace HiSafe
 
             byte* dst = (byte*)imageData.Scan0.ToPointer() + dstStride * (height - 1);
             byte* src = (byte*)buffer_ptr.ToPointer();
+
+            //for (int y = 0; y < height; y++)
+            //{
+            //    memcpy(dst, src, srcStride);
+            //    dst -= dstStride;
+            //    src += srcStride;
+            //}
 
             for (int y = 0; y < height; y++)
             {
@@ -314,14 +279,12 @@ namespace HiSafe
             int _width_counter = 80, _height_counter = 60;
             int _w_counter = 0, _h_counter = 0;
             byte index_box = 0;
-
-            while (_h_counter < _height_counter)
-            {
+ 
+            while(_h_counter < _height_counter) {
                 while (_w_counter < _width_counter)
                 {
                     Color saturation = Color.FromArgb(_average_bytes[index_box], _average_bytes[index_box], _average_bytes[index_box]);
-                    pe.Graphics.FillRectangle(new SolidBrush(saturation), new Rectangle(_w_counter, _h_counter, _width_counter, _height_counter));
-
+                    pe.Graphics.FillRectangle(new SolidBrush(saturation), new Rectangle(_w_counter, 240 - _h_counter - _height_counter, _width_counter, _height_counter));
 
                     _w_counter += 80;
                     index_box++;
@@ -333,6 +296,7 @@ namespace HiSafe
                 if (_height_counter < 240) _height_counter += 60;
             }
 
+ 
             base.OnPaint(pe);
         }
 

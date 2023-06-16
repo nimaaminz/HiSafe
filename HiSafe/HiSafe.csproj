@@ -75,35 +75,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataBaseConfigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DataBaseConfigForm.Designer.cs">
-      <DependentUpon>DataBaseConfigForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="GetDetectsImagesFromDBFrom.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GetDetectsImagesFromDBFrom.Designer.cs">
-      <DependentUpon>GetDetectsImagesFromDBFrom.cs</DependentUpon>
-    </Compile>
     <Compile Include="HiSafeCore.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="DataBaseConfigForm.resx">
-      <DependentUpon>DataBaseConfigForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GetDetectsImagesFromDBFrom.resx">
-      <DependentUpon>GetDetectsImagesFromDBFrom.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

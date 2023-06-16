@@ -114,12 +114,16 @@ namespace HiSafeCore
     public class MotionDetect
     {
 
-        CameraInterface camera;
+        private CameraInterface camera;
         public event OnFrameProccess proccess_event;
         public event OnDetectAvrg detect_motion_event;
         public int interlock_new_frame;
         public bool interlock_boolean = false;
-        public PerformanceChecker pchecker;
+        public PerformanceChecker pchecker;        
+        
+        public byte[] old_average = new byte[16];
+        public byte[] averages = new byte[16];
+        
         public MotionDetect(CameraInterface _camera)
         {
             camera = _camera;
@@ -127,12 +131,11 @@ namespace HiSafeCore
             pchecker = new PerformanceChecker(300);
         }
 
+        // the coming frame is 320 * 240 and then the data array
+        // will be size in : 240*320*3(RGB)
+        private byte[] _buffer_camera_coming_data = new byte[230400]; 
 
-        private byte[] _buffer_camera_coming_data = new byte[230400]; // the coming frame is 320 * 240 and then the data array will be size in : 240*320*3(RGB)
 
-        //320 * 240 pixel | 
-        // 80 * 60 | 
-        //private void Camera_frame_recieve_isr(Bitmap frame)
         private void Camera_frame_recieve_isr(IntPtr buffer, int length, double time_stamp)
         {
             if (interlock_boolean)
@@ -142,20 +145,12 @@ namespace HiSafeCore
             }
             interlock_boolean = true;
 
-            Marshal.Copy(buffer, _buffer_camera_coming_data, 0, length);  // copy incoming buffer to the data array 
+            // copy incoming buffer to the data array 
+            Marshal.Copy(buffer, _buffer_camera_coming_data, 0, length);  
+            // copy lasst average array to old average array 
             Array.Copy(averages, old_average, averages.Length);
-            extract();
-            if (dispute()) detect_motion_event.Invoke();
-            proccess_event?.Invoke(buffer, length);
+            
 
-            interlock_boolean = false;
-        }
-
-        public byte[] old_average = new byte[16];
-        public byte[] averages = new byte[16];
-
-        private void extract()
-        {
             pchecker.start();
             int step = 3;
             byte index_box = 0;
@@ -191,6 +186,15 @@ namespace HiSafeCore
             }
 
             pchecker.stop();
+
+
+
+
+            if (dispute()) detect_motion_event.Invoke();
+
+            proccess_event?.Invoke(buffer, length);
+
+            interlock_boolean = false;
         }
 
         private bool dispute()
@@ -240,115 +244,5 @@ namespace HiSafeCore
         }
     }
 
-
-    public class DataBaseMySqlClass
-    {
-        public static string mysql_connection_string;
-        private static MySqlConnection connection;
-        private static MySqlCommand cmd;                        // MySql command
-
-        public static string table_name = "motion_detect_images";                 // THIS SHOULD CHANGE ON COMBO BOX MODEL SELECT CHANGE AND 
-                                                                                  // WHEN THIS STRING CHANGE , THE PROGTAM READ/WRITE FROM 
-        private static int date_now;
-
-
-        public static bool ConenctionStatus { get { return connection.State == System.Data.ConnectionState.Open ? true : false; } }
-
-
-        public bool HostConnectionStatusDB { get { return connection.State == System.Data.ConnectionState.Open ? true : false; } }
-
-        public DataBaseMySqlClass(string _mysql_connection_string)
-        {// call it when you want to connect to the database
-            mysql_connection_string = _mysql_connection_string;
-            connection = new MySqlConnection(mysql_connection_string);
-            // calculate the date 
-            // . . . 
-            string _date_str = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString();
-            date_now = int.Parse(_date_str);
-
-        }
-
-        private bool INTER_LOCK_CONNECTION = false;
-
-        public bool conenctDB()
-        {
-            if (INTER_LOCK_CONNECTION) return false;
-
-            INTER_LOCK_CONNECTION = true ; 
-
-            Task.Run(() =>
-            {
-
-                try
-                {
-
-                    if (connection != null)
-                        connection.Open();
-
-                    INTER_LOCK_CONNECTION = false;
-                }
-                catch (MySql.Data.MySqlClient.MySqlException)
-                {
-                    INTER_LOCK_CONNECTION = false;
-                }
-
-            });
-
-            return connection.State == System.Data.ConnectionState.Open ? true : false;
-        }
-
-        public bool Disconenct()
-        {
-            connection.Close();
-            return connection.State == System.Data.ConnectionState.Closed ? true : false;
-        }
-
-        public void add_record(Bitmap _image)
-        {
-            if (_image == null) return;
-            int unix_time = (int)((DateTime.UtcNow.Ticks - new DateTime(1970, 1, 1).Ticks) / TimeSpan.TicksPerSecond);
-
-            //  image to byte array 
-            MemoryStream _mem_image = new MemoryStream();
-            _image.Save(_mem_image, ImageFormat.Jpeg);
-            byte[] _pic_array = new byte[_mem_image.Length];
-            _mem_image.Position = 0;
-            _mem_image.Read(_pic_array, 0, _pic_array.Length);
-
-
-            cmd = new MySqlCommand("INSERT INTO " + table_name + "(ID , Image , Date_Time) VALUES (@id,@image,@date );", connection);
-            cmd.Parameters.AddWithValue("@id", unix_time);
-            cmd.Parameters.AddWithValue("@image", _pic_array);
-            cmd.Parameters.AddWithValue("@date", date_now);
-
-            cmd.ExecuteNonQuery();
-        }
-
-        public byte[] last_detection_image()
-        {
-
-            if (connection.State != System.Data.ConnectionState.Open) return null; // sql connection error;
-
-            MySqlConnection _connection = new MySqlConnection(mysql_connection_string);
-            _connection.Open();
-
-            byte[] image_data = new byte[10000];
-
-            string query = "SELECT Image FROM  " + table_name + " ORDER BY ID DESC LIMIT 1 ; "; // query
-
-            MySqlCommand _cmd = new MySqlCommand(query, _connection);
-            MySqlDataReader _data_reader = _cmd.ExecuteReader();
-
-            if (_data_reader.Read())
-            {
-                long test = _data_reader.GetBytes(0, 0, image_data, 0, image_data.Length);
-            }
-            _connection.Close();
-            return image_data;
-        }
-
-
-
-    }
 
 }
